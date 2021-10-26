@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "sqly"
+version = "0.1.0"
+description = ""
+authors = ["Rostislav Grigorjev <grigorjew.rostislaw@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+ply = "^3.11"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = "^21.9b0"
+isort = "^5.9.3"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
