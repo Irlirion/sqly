@@ -94,5 +94,5 @@ class SelectLexer(object):
 
 if __name__ == "__main__":
     select_lexer = SelectLexer()
-    select_lexer.build(debug=True)
+    select_lexer.build(optimize=True)
     runmain_upper(lexer=select_lexer.lexer)
