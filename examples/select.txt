@@ -1,0 +1,11 @@
+SELECT DISTINCT ALL FROM WHERE NOT NULL DEFAULT select distinct all from where not null default
+.,!?:;
+123 -123 123. -123.123
+1 a s d A S D   
+"1 a s d A S D   "
++-*/
+<> >< < > => <= >=
+a_ a_a _a _12a
+AND OR and or
+?! $% {} ~
+(123.)
