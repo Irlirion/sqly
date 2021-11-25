@@ -7,7 +7,7 @@ from utils import find_column, find_line, runmain_upper
 class SelectLexer(object):
     """Lexer object for parse SELECT expression"""
 
-    literals = "()"
+    literals = "()+-*/;"
 
     reserved = {
         "SELECT": "SELECT",
@@ -21,43 +21,28 @@ class SelectLexer(object):
     }
 
     tokens = [
-        "SEPARATOR",
-        "PUNCTUATION_MARK",
-        "DIGIT",
-        "CHAR",
         "NUMBER",
-        "SYMBOL",
         "STRING",
         "ID",
-        "TABLE_NAME",
-        "FIELD_NAME",
-        "NUMERICAL_OPERATOR",
-        "NUMERICAL_FACTOR",
-        "NUMERICAL_EXPRESSION",
-        "VALUE",
         "COMPARSION_OPERATOR",
         "CONDITIONAL_OPERATOR",
-        "FIELD_VALUE",
-        "PREDICATE",
-        "CONDITIONAL_FACTOR",
-        "CONDITIONAL",
-        "FIELD_LIST",
     ]
 
     tokens += reserved.values()
 
-    t_SEPARATOR = r"(\s)"
-    t_PUNCTUATION_MARK = r"[.,!?:;]"
-    t_DIGIT = r"(\d)"
-    t_CHAR = r"[A-Z]"
-    t_SYMBOL = f"({t_DIGIT}|{t_CHAR}|{t_PUNCTUATION_MARK}|{t_SEPARATOR})"
-    t_STRING = f'"{t_SYMBOL}*"'
-    t_NUMERICAL_OPERATOR = r"[+\-*/]"
+    punctuation_mark = r"[.,!?:;]"
+    separator = r"(\s)"
+    digit = r"(\d)"
+    char = r"[A-Z]"
+    symbol = f"({digit}|{char}|{punctuation_mark}|{separator})"
+    t_STRING = f'"{symbol}*"'
     t_COMPARSION_OPERATOR = r"(<>|<=|>=|<|>|=)"
 
-    identifier = f"({t_CHAR}|_)({t_CHAR}|_|{t_DIGIT})*"
-    number = f"(-?{t_DIGIT}+\.?{t_DIGIT}*)"
+    t_ignore = " \t"
 
+    identifier = f"({char}|_)({char}|_|{digit})*"
+    number = f"(-?{digit}+\.?{digit}*)"
+        
     @TOKEN(number)
     def t_NUMBER(self, t):
         return t
@@ -94,5 +79,5 @@ class SelectLexer(object):
 
 if __name__ == "__main__":
     select_lexer = SelectLexer()
-    select_lexer.build(optimize=True)
+    select_lexer.build(debug=True)
     runmain_upper(lexer=select_lexer.lexer)

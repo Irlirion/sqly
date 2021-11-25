@@ -146,3 +146,5 @@ cython_debug/
 
 # Ply
 lextab.py
+sqly/parser.out
+sqly/parsetab.py
