@@ -1,0 +1,16 @@
+SELECT ABC FROM ABC;
+SELECT A B C FROM ABC;
+SELECT A B C FROM A B C;
+SELECT DISTINCT A FROM B;
+SELECT ALL B FROM A B C;
+SELECT * FROM A B C;
+SELECT * FROM A WHERE B = 1;
+SELECT * FROM B WHERE C = 2 + 3;
+SELECT * FROM C WHERE D = (2 + 3);
+SELECT * FROM C WHERE (D = (2 + 3));
+SELECT * FROM C WHERE (D = (2 + 3) AND (A >= 2));
+SELECT *
+FROM C
+WHERE (D = (2 + 3) AND (A >= 2 OR (NOT E = "QWERTY  
+                                                    YTREWQ!")));
+SELECT _A FROM _B WHERE NOT A > 0 AND B < 0 OR A = (3 / 2 + 3 - -321 + 231.3123);
