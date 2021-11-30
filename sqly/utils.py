@@ -12,6 +12,14 @@ def find_line(input: str, pos: int):
     return slice(line_start, line_end)
 
 
+def raise_error(t):
+    print('-'*80)
+    print(t.lexer.lexdata[find_line(t.lexer.lexdata, t.lexpos)])
+    column = find_column(t.lexer.lexdata, t.lexpos) - 2
+    print(' ' * column, '^')
+    print(f"SyntaxError on line {t.lineno+1}: illegal character '{t.value[0]}'")
+    print('-'*80)
+
 def runmain_upper(lexer=None, data=None):
     if not data:
         try:

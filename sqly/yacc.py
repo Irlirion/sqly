@@ -1,6 +1,7 @@
 import sys
 import ply.yacc as yacc
 from sqly.lex import SelectLexer
+from utils import find_column, find_line, raise_error
 
 selectlexer = SelectLexer()
 selectlexer.build()
@@ -17,23 +18,29 @@ def p_select_part(p):
     """select_part : SELECT select_opt field_list
                    | SELECT field_list"""
 
+def p_select_part_error(p):
+     'select_part : SELECT error'
+
 def p_select_opt(p):
     """select_opt : DISTINCT
                   | ALL"""
 
 def p_field_list(p):
     """field_list : '*'
-                  | field_name field_list
+                  | field_name ',' field_list
                   | field_name"""
 
 def p_field_name(p):
-    'field_name : ID'
+    """field_name : ID"""
 
 def p_from_part(p):
     """from_part : FROM tabel_list"""
 
+def p_from_part_error(p):
+     """from_part : FROM error"""
+
 def p_tabel_list(p):
-    """tabel_list : tabel_name tabel_list
+    """tabel_list : tabel_name ',' tabel_list
                   | tabel_name"""
 
 def p_tabel_name(p):
@@ -42,17 +49,18 @@ def p_tabel_name(p):
 def p_where_part(p):
     """where_part : WHERE condition"""
 
-def p_confition(p):
-    """condition : condition_factor
-                 | '(' condition_factor ')'"""
+def p_where_part_error(p):
+    """where_part : WHERE error"""
 
-def p_condition_factor(p):
-    """condition_factor : predicate
-                        | predicate CONDITIONAL_OPERATOR condition"""
+def p_confition(p):
+    """condition : predicate
+                 | '(' condition ')'
+                 | condition AND condition
+                 | condition OR condition"""
 
 def p_predicate(p):
     """predicate : field_value COMPARSION_OPERATOR field_value
-                 | NOT field_value COMPARSION_OPERATOR field_value"""
+                 | NOT predicate"""
 
 def p_field_value(p):
     """field_value : value
@@ -65,25 +73,22 @@ def p_value(p):
              | DEFAULT"""
 
 def p_numeric_expression(p):
-    """numeric_expression : numeric_factor
-                          | '(' numeric_factor ')'"""
+    """numeric_expression : NUMBER
+                      | '(' numeric_expression ')'
+                      | numeric_expression '+' numeric_expression
+                      | numeric_expression '-' numeric_expression
+                      | numeric_expression '*' numeric_expression
+                      | numeric_expression '/' numeric_expression"""
 
-def p_numeric_factor(p):
-    """numeric_factor : NUMBER
-                      | NUMBER numeric_operator numeric_expression"""
 
-def p_numeric_operator(p):
-    """numeric_operator : '+'
-                        | '-'
-                        | '*'
-                        | '/'"""
+precedence = (
+    ('left', '+', '-', 'OR'),
+    ('left', '*', '/', 'AND'),
+)
 
-# Error rule for syntax errors
 def p_error(t):
-    if t:
-        raise SyntaxError('invalid syntax', (None, t.lineno, None, t.value))
-    else:
-        raise SyntaxError('unexpected EOF while parsing', (None, None, None, None))
+    raise_error(t)
+
 
 # Build the grammar
 def make_parser(debug=False):
@@ -127,20 +132,7 @@ def run_parser(parser, source, debug):
     lexer = selectlexer.lexer
     lexer.lineno = 1
 
-    try:
-        result = parser.parse(s, lexer=lexer.clone(), debug=debug)
-    except SyntaxError as e:
-        if e.lineno is not None:
-            print('\n', source.name, e, 'near', repr(e.text))
-        else:
-            print('\n', source.name, e)
-        sys.exit(1)
-    except:
-        print("Critical error in:", source.name)
-        raise
-
-    print("\033[92mCORRECT\033[0m")
-    parser.restart()
+    parser.parse(s, lexer=lexer.clone(), debug=debug)
 
 
 if __name__ == '__main__':
