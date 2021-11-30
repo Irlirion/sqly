@@ -7,17 +7,19 @@ from utils import find_column, find_line, runmain_upper
 class SelectLexer(object):
     """Lexer object for parse SELECT expression"""
 
-    literals = "()+-*/;"
+    literals = "()+-*/;,"
 
     reserved = {
-        "SELECT": "SELECT",
-        "DISTINCT": "DISTINCT",
-        "ALL": "ALL",
-        "FROM": "FROM",
-        "WHERE": "WHERE",
-        "NOT": "NOT",
-        "NULL": "NULL",
-        "DEFAULT": "DEFAULT",
+        "SELECT",
+        "DISTINCT",
+        "ALL",
+        "FROM",
+        "WHERE",
+        "NOT",
+        "NULL",
+        "DEFAULT",
+        "AND",
+        "OR",
     }
 
     tokens = [
@@ -25,10 +27,9 @@ class SelectLexer(object):
         "STRING",
         "ID",
         "COMPARSION_OPERATOR",
-        "CONDITIONAL_OPERATOR",
     ]
 
-    tokens += reserved.values()
+    tokens += reserved
 
     punctuation_mark = r"[.,!?:;]"
     separator = r"(\s)"
@@ -37,23 +38,16 @@ class SelectLexer(object):
     symbol = f"({digit}|{char}|{punctuation_mark}|{separator})"
     t_STRING = f'"{symbol}*"'
     t_COMPARSION_OPERATOR = r"(<>|<=|>=|<|>|=)"
+    t_NUMBER = f"(-?{digit}+\.?{digit}*)"
+
 
     t_ignore = " \t"
 
     identifier = f"({char}|_)({char}|_|{digit})*"
-    number = f"(-?{digit}+\.?{digit}*)"
-        
-    @TOKEN(number)
-    def t_NUMBER(self, t):
-        return t
-
-    def t_CONDITIONAL_OPERATOR(self, t):
-        r"(AND|OR)"
-        return t
 
     @TOKEN(identifier)
     def t_ID(self, t):
-        t.type = self.reserved.get(t.value, "ID")
+        t.type = t.value if t.value in self.reserved else "ID"
         return t
 
     def t_newline(self, t):
