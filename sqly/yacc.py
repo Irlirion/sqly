@@ -1,7 +1,6 @@
 import sys
 import ply.yacc as yacc
 from sqly.lex import SelectLexer
-from utils import find_column, find_line, raise_error
 
 selectlexer = SelectLexer()
 selectlexer.build()
@@ -18,9 +17,6 @@ def p_select_part(p):
     """select_part : SELECT select_opt field_list
                    | SELECT field_list"""
 
-def p_select_part_error(p):
-     'select_part : SELECT error'
-
 def p_select_opt(p):
     """select_opt : DISTINCT
                   | ALL"""
@@ -30,27 +26,29 @@ def p_field_list(p):
                   | field_name ',' field_list
                   | field_name"""
 
+def p_field_list_error(p):
+    """field_list : field_name error field_list"""
+    print(f"Incorrect delimeter between field names")
+
 def p_field_name(p):
     """field_name : ID"""
 
 def p_from_part(p):
     """from_part : FROM tabel_list"""
 
-def p_from_part_error(p):
-     """from_part : FROM error"""
-
 def p_tabel_list(p):
     """tabel_list : tabel_name ',' tabel_list
                   | tabel_name"""
+
+def p_tabel_list_error(p):
+    """tabel_list : tabel_name error tabel_name"""
+    print(f"Incorrect delimeter between table names")
 
 def p_tabel_name(p):
     """tabel_name : ID"""
 
 def p_where_part(p):
     """where_part : WHERE condition"""
-
-def p_where_part_error(p):
-    """where_part : WHERE error"""
 
 def p_confition(p):
     """condition : predicate
@@ -79,16 +77,20 @@ def p_numeric_expression(p):
                       | numeric_expression '-' numeric_expression
                       | numeric_expression '*' numeric_expression
                       | numeric_expression '/' numeric_expression"""
+                      
+def p_numeric_expression_error(p):
+    """numeric_expression : numeric_expression error numeric_expression"""
+    print('Incorrect numeric operator')
 
 
 precedence = (
     ('left', '+', '-', 'OR'),
     ('left', '*', '/', 'AND'),
+    ('left', 'error')
 )
 
-def p_error(t):
-    raise_error(t)
-
+def p_error(p):
+    print(f"SyntaxError in line {p.lineno+1}")
 
 # Build the grammar
 def make_parser(debug=False):
@@ -121,7 +123,7 @@ def main():
         else:
             for root, _, files in os.walk(args.path):
                 for fpath in files:
-                    if not fpath.endswith('.php'):
+                    if not fpath.endswith('.txt'):
                         continue
                     with open(os.path.join(root, fpath), 'r') as f:
                         run_parser(parser, f, args.debug)
