@@ -15,6 +15,7 @@ FROM C
 WHERE (D = (2 + 3) AND (A >= 2 OR (NOT E = "QWERTY  
                                                     YTREWQ312312.,!?:;")));
 SELECT _A FROM _B WHERE NOT A > 0 AND B < 0 OR A = (3 / 2 + (3 - -321 + 231.3123) + 1 + (2 / 0) - 1);
+
 SELECT A_ AD FROM ASD;
 SELECT * FROM ASD ASD;
-SELECT * FROM A WHERE NOT A < B + C;
+SELECT * FROM B C WHERE A > (2 , 2) * 2 , 2;
